@@ -21,13 +21,15 @@ p = zeros(size(X, 1), 1);
 %       can use max(A, [], 2) to obtain the max for each row.
 %
 
+% first layer to second layer
+X = [ones(m, 1) X];
+tmp = sigmoid(X * Theta1');
 
+% second layer to third layer
+tmp = [ones(size(tmp, 1), 1) tmp];
+tmp = sigmoid(tmp * Theta2');
 
-
-
-
-
-
+[~ ,p]=max(tmp, [], 2);
 
 % =========================================================================
 

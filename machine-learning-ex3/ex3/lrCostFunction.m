@@ -38,11 +38,25 @@ grad = zeros(size(theta));
 
 
 
+%J = (1/m) * sum(-y'*log(sigmoid(X*theta)) - (1.-y)'*log(1.-sigmoid(X*theta)));
+%
+%grad = (1/m) * (X'*sigmoid(X*theta) - X'*y);
+%%%
+%theta = [0; theta(2:end)];
+%
+%J = J .+ lambda / (2*m) * sum(theta .^ 2 );
+%
+%grad = grad .+ (lambda / m) * theta;
 
 
-
-
-
+%% 
+z = X*theta;
+h = sigmoid(z);
+logisfunc = (-y)'*log(h) - (1-y)'*log(1-h);
+grad = (1/m) * (X'*(h-y)); % shouldnt include theta_zero
+theta = [0; theta(2:end)];
+grad(2:end) = grad(2:end) .+ (1/m) * lambda.*theta(2:end);
+J = (1/m) .* sum(logisfunc) + lambda/(2*m) .* sum(theta.^2);
 
 
 % =============================================================
