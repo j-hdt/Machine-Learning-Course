@@ -59,6 +59,7 @@ $$
 $$
 } at the same time for all $j$
 
+<div class="pagebreak"></div>
 ## Week 2
 - Linear Regression with Multiple Variables
     - Multivariate Linear Regression
@@ -71,13 +72,13 @@ h_\theta (x) = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \theta_3 x_3 + \cdots + 
 $$
 Vectorization
 $$
-\begin{align*}h_\theta(x) =\begin{bmatrix}\theta_0 \hspace{2em} \theta_1 \hspace{2em} ... \hspace{2em} \theta_n\end{bmatrix}\begin{bmatrix}x_0 \newline x_1 \newline \vdots \newline x_n\end{bmatrix}= \theta^T x\end{align*}
+\begin{aligned}h_\theta(x) =\begin{bmatrix}\theta_0 \hspace{2em} \theta_1 \hspace{2em} ... \hspace{2em} \theta_n\end{bmatrix}\begin{bmatrix}x_0 \\ x_1 \\ \vdots \\ x_n\end{bmatrix}= \theta^T x\end{aligned}
 $$
 
 ### Gradient Descent for multiple variables
 repeat until convergence: {
 $$
-\begin{align*}\theta_j := \theta_j - \alpha \frac{1}{m} \sum\limits_{i=1}^{m} (h_\theta(x^{(i)}) - y^{(i)}) \cdot x_j^{(i)} \; &&  \text{for j := 0...n}\end{align*}
+\begin{aligned}\theta_j := \theta_j - \alpha \frac{1}{m} \sum\limits_{i=1}^{m} (h_\theta(x^{(i)}) - y^{(i)}) \cdot x_j^{(i)} \; &&  \text{for j := 0...n}\end{aligned}
 $$
 }
 
@@ -115,6 +116,7 @@ Needs many iterations       |  No need to iterate
 $O(kn^2)$                   | $O(n^3)$, need to calculate inverse of $X^T X$
 Works well when n is large  | Slow if n is very large
 
+<div class="pagebreak"></div>
 ## Week 3
 - Logistic Regression
     - Classification and Representation
@@ -127,7 +129,7 @@ Works well when n is large  | Slow if n is very large
 When $y\in \{0,1\}$ the hypothesis $h_\theta (x)$ should also satisfy $0 \leq h_\theta (x) \leq 1$.  
 Therefore, $\theta^T x$ can be plugged into the "Logistics Function":
 $$
-\begin{align*}& h_\theta (x) = g ( \theta^T x ) \newline \newline& z = \theta^T x \newline& g(z) = \dfrac{1}{1 + e^{-z}}\end{align*}
+\begin{aligned}& h_\theta (x) = g ( \theta^T x ) \\& z = \theta^T x \\& g(z) = \dfrac{1}{1 + e^{-z}}\end{aligned}
 $$
 
 $h_\theta (x)$ will give the __probability__ that our output is 1.  
@@ -135,10 +137,10 @@ $h_\theta (x) = P(y=1|x;\theta)=1-P(y=0|x;\theta)$
 
 ### Decision Boundary
 In order to get the discrete 0 or 1 classification, the output can be translated by rounding.  
-$\begin{align*}& h_\theta(x) \geq 0.5 \rightarrow y = 1 \newline& h_\theta(x) < 0.5 \rightarrow y = 0 \newline\end{align*}$
+$\begin{aligned}& h_\theta(x) \geq 0.5 \rightarrow y = 1 \\& h_\theta(x) < 0.5 \rightarrow y = 0 \\\end{aligned}$
 
 This way it can be said that  
-$\begin{align*}& \theta^T x \geq 0 \Rightarrow y = 1 \newline& \theta^T x < 0 \Rightarrow y = 0 \newline\end{align*}$
+$\begin{aligned}& \theta^T x \geq 0 \Rightarrow y = 1 \\& \theta^T x < 0 \Rightarrow y = 0 \\\end{aligned}$
 
 The __decision boundary__ is the line that separates the area where $y=0$ and where $y=1$. It is created by the hypothesis function.
 
@@ -146,7 +148,7 @@ The __decision boundary__ is the line that separates the area where $y=0$ and wh
 Cost function for logistic regression needs to be adopted because the Logistic Function will cause the output to be wavy, causing many local optima (not a convex function).
 
 $$
-\begin{align*}& J(\theta) = \dfrac{1}{m} \sum_{i=1}^m \mathrm{Cost}(h_\theta(x^{(i)}),y^{(i)}) \newline & \mathrm{Cost}(h_\theta(x),y) = -\log(h_\theta(x)) \; & \text{if y = 1} \newline & \mathrm{Cost}(h_\theta(x),y) = -\log(1-h_\theta(x)) \; & \text{if y = 0}\end{align*}
+\begin{aligned}& J(\theta) = \dfrac{1}{m} \sum_{i=1}^m \mathrm{Cost}(h_\theta(x^{(i)}),y^{(i)}) \\ & \mathrm{Cost}(h_\theta(x),y) = -\log(h_\theta(x)) \; & \text{if y = 1} \\ & \mathrm{Cost}(h_\theta(x),y) = -\log(1-h_\theta(x)) \; & \text{if y = 0}\end{aligned}
 $$
 
 ### Simplified Cost Function and Gradient Descent
@@ -157,7 +159,7 @@ J(\theta) = - \frac{1}{m} \displaystyle \sum_{i=1}^m [y^{(i)}\log (h_\theta (x^{
 $$
 
 Vectorized implementation:  
-$$\begin{align*} & h = g(X\theta)\newline & J(\theta) = \frac{1}{m} \cdot \left(-y^{T}\log(h)-(1-y)^{T}\log(1-h)\right) \end{align*}
+$$\begin{aligned} & h = g(X\theta)\\ & J(\theta) = \frac{1}{m} \cdot \left(-y^{T}\log(h)-(1-y)^{T}\log(1-h)\right) \end{aligned}
 $$
 
 #### Gradient Descent
@@ -179,7 +181,7 @@ The problem will be divided into $n+1$ (+1 because the index starts at 0) binary
 This will compare one class against all the others. Then, the hypothesis that returned the highest value will be used as the prediction.
 
 $$
-\begin{align*}& y \in \lbrace0, 1 ... n\rbrace \newline& h_\theta^{(0)}(x) = P(y = 0 | x ; \theta) \newline& h_\theta^{(1)}(x) = P(y = 1 | x ; \theta) \newline& \cdots \newline& h_\theta^{(n)}(x) = P(y = n | x ; \theta) \newline& \mathrm{prediction} = \max_i( h_\theta ^{(i)}(x) )\newline\end{align*}
+\begin{aligned}& y \in \lbrace0, 1 ... n\rbrace \\& h_\theta^{(0)}(x) = P(y = 0 | x ; \theta) \\& h_\theta^{(1)}(x) = P(y = 1 | x ; \theta) \\& \cdots \\& h_\theta^{(n)}(x) = P(y = n | x ; \theta) \\& \mathrm{prediction} = \max_i( h_\theta ^{(i)}(x) )\\\end{aligned}
 $$
 
 ### Solving the Problem of Overfitting
@@ -199,7 +201,7 @@ To prevent/reduce overfitting from the hypothesis function, the weight that some
 The $\lambda$ is the __regularization parameter__.
 It determines how much the cost of theta parameters are inflated.
 $$
-min_\theta\ \dfrac{1}{2m}\  \sum_{i=1}^m (h_\theta(x^{(i)}) - y^{(i)})^2 + \lambda\ \sum_{j=1}^n \theta_j^2
+\min_{\theta}\ \dfrac{1}{2m}\  \sum_{i=1}^m (h_\theta(x^{(i)}) - y^{(i)})^2 + \lambda\ \sum_{j=1}^n \theta_j^2
 $$
 
 ### Regularized Linear Regression
@@ -209,7 +211,7 @@ Regularization can be applied to both linear regression and logistics function.
 #### Gradient Descent
 Repeat {
 $$
-\begin{align*} & \theta_0 := \theta_0 - \alpha\ \frac{1}{m}\ \sum_{i=1}^m (h_\theta(x^{(i)}) - y^{(i)})x_0^{(i)} \newline & \theta_j := \theta_j - \alpha\ \left[ \left( \frac{1}{m}\ \sum_{i=1}^m (h_\theta(x^{(i)}) - y^{(i)})x_j^{(i)} \right) + \frac{\lambda}{m}\theta_j \right] & j \in \lbrace 1,2...n\rbrace\end{align*}
+\begin{aligned} & \theta_0 := \theta_0 - \alpha\ \frac{1}{m}\ \sum_{i=1}^m (h_\theta(x^{(i)}) - y^{(i)})x_0^{(i)} \\ & \theta_j := \theta_j - \alpha\ \left[ \left( \frac{1}{m}\ \sum_{i=1}^m (h_\theta(x^{(i)}) - y^{(i)})x_j^{(i)} \right) + \frac{\lambda}{m}\theta_j \right] & j \in \lbrace 1,2...n\rbrace\end{aligned}
 $$
 }
 
@@ -221,12 +223,64 @@ $$
 #### Normal Equation
 To add in regularization, the equation is the same as our original, except that we add another term inside parentheses:
 $$
-\begin{align*}& \theta = \left( X^TX + \lambda \cdot L \right)^{-1} X^Ty \newline& \text{where}\ \ L = \begin{bmatrix} 0 & & & & \newline & 1 & & & \newline & & 1 & & \newline & & & \ddots & \newline & & & & 1 \newline\end{bmatrix}\end{align*}
+\begin{aligned}& \theta = \left( X^TX + \lambda \cdot L \right)^{-1} X^Ty \\& \text{where}\ \ L = \begin{bmatrix} 0 & & & & \\ & 1 & & & \\ & & 1 & & \\ & & & \ddots & \\ & & & & 1 \\ \end{bmatrix} \end{aligned}
 $$
 
 ### Regularized Logistics Regression
 $$
 J(\theta) = - \frac{1}{m} \sum_{i=1}^m \large[ y^{(i)}\ \log (h_\theta (x^{(i)})) + (1 - y^{(i)})\ \log (1 - h_\theta(x^{(i)}))\large] + \frac{\lambda}{2m}\sum_{j=1}^n \theta_j^2
 $$
-The second sum __means to explicitly exclude__ the bias term (\theta_0).  
+The second sum __means to explicitly exclude__ the bias term $(\theta_0)$.  
 Thus, for computing $\theta_0$ should be calculated in the same "repeat" statement but separate without the bias term.
+
+<div class="pagebreak"></div>
+## Week 4
+- Neural Networks: Representation
+
+### Model Representation
+Neural network consisting of
+
+- Input layer
+- Hidden layers
+- Output layer
+
+where the current layer is denoted by $j$.  
+A model with 3 layers (input, hidden and output) would look like:
+$$
+\begin{bmatrix}x_0 \\ x_1 \\ x_2 \\ x_3\end{bmatrix}\rightarrow\begin{bmatrix}a_1^{(2)} \\ a_2^{(2)} \\ a_3^{(2)} \\ \end{bmatrix}\rightarrow h_\theta(x)
+$$
+where
+$$
+\begin{aligned}& a_i^{(j)} = \text{"activation" of unit $i$ in layer $j$} \\& \Theta^{(j)} = \text{matrix of weights controlling function mapping from layer $j$ to layer $j+1$}\end{aligned}
+$$
+
+The values for each of the "activation" nodes is obtained as follows:
+$$
+\begin{aligned} a_1^{(2)} = g(\Theta_{10}^{(1)}x_0 + \Theta_{11}^{(1)}x_1 + \Theta_{12}^{(1)}x_2 + \Theta_{13}^{(1)}x_3) \\ a_2^{(2)} = g(\Theta_{20}^{(1)}x_0 + \Theta_{21}^{(1)}x_1 + \Theta_{22}^{(1)}x_2 + \Theta_{23}^{(1)}x_3) \\ a_3^{(2)} = g(\Theta_{30}^{(1)}x_0 + \Theta_{31}^{(1)}x_1 + \Theta_{32}^{(1)}x_2 + \Theta_{33}^{(1)}x_3) \\ h_\Theta(x) = a_1^{(3)} = g(\Theta_{10}^{(2)}a_0^{(2)} + \Theta_{11}^{(2)}a_1^{(2)} + \Theta_{12}^{(2)}a_2^{(2)} + \Theta_{13}^{(2)}a_3^{(2)}) \\ \end{aligned}
+$$
+Each layer gets its own matrix of weights $\Theta^{(j)}$.  
+The dimensions of the weights is determined as follows:  
+$\text{If network has } s_j \text{ units in layer } j \text{ and } s_{j+1} \text{ units in layer } j+1, \text{ then } \Theta^{j} \text{ will be of dimension } s_{j+1} \times (s_j + 1)$.
+The +1 comes from the addition $\Theta^{(j)}$ of the "bias nodes" $x_0$ and $\Theta^{(j)}_0$.
+
+To vectorize the functions, a new variable $z^{(j)}_k$ is defined:
+$$
+\begin{aligned}a_1^{(2)} = g(z_1^{(2)}) \\ a_2^{(2)} = g(z_2^{(2)}) \\ a_3^{(2)} = g(z_3^{(2)}) \\ \end{aligned}
+$$
+For layer $j=2$ and node $k$, the variable $z$ will be:
+$$
+z_k^{(2)} = \Theta_{k,0}^{(1)}x_0 + \Theta_{k,1}^{(1)}x_1 + \cdots + \Theta_{k,n}^{(1)}x_n
+$$
+and the vector representation is:
+$$
+\begin{aligned}x = \begin{bmatrix}x_0 \\ x_1 \\\cdots \\ x_n\end{bmatrix} &z^{(j)} = \begin{bmatrix}z_1^{(j)} \\ z_2^{(j)} \\\cdots \\ z_n^{(j)}\end{bmatrix}\end{aligned}
+$$
+Setting $x=a^{(1)}$, the equation can be written as
+$$
+z^{(j)} = \Theta^{(j-1)}a^{(j-1)}
+$$
+
+<div class="pagebreak"></div>
+## Week 5
+- Neural Networks: Learning
+    - Cost Function and Backpropagation
