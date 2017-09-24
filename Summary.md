@@ -284,3 +284,131 @@ $$
 ## Week 5
 - Neural Networks: Learning
     - Cost Function and Backpropagation
+
+### Cost Function
+$L = \text{ total no. of layers in network}$  
+$s_l = \text{ number of units (not counting bias unit) in layer l}$  
+$K = \text{ number of output units/classes}$
+
+Neural Network cost function similar to Logistic regression but for $K$ classes
+$$
+\begin{gathered} J(\Theta) = - \frac{1}{m} \sum_{i=1}^m \sum_{k=1}^K \left[y^{(i)}_k \log ((h_\Theta (x^{(i)}))_k) + (1 - y^{(i)}_k)\log (1 - (h_\Theta(x^{(i)}))_k)\right] + \frac{\lambda}{2m}\sum_{l=1}^{L-1} \sum_{i=1}^{s_l} \sum_{j=1}^{s_{l+1}} ( \Theta_{j,i}^{(l)})^2\end{gathered}
+$$
+
+### Backpropagation Algorithm
+
+$\delta_j^{l} =$ the "error" of node $j$ in layer $l$.
+
+Backpropagation is neural-network terminology for minimizing the cost function (as done for gradient descent in logistic and linear regression). Goal:  
+$\min_\Theta J(\Theta)$
+
+That is, minimizing the cost function $J$ using an optimal set of parameters in theta.
+
+To compute the partial derivative of $J(\Theta)$:
+$$
+\dfrac{\partial}{\partial \Theta_{i,j}^{(l)}}J(\Theta)
+$$
+The following algorithm can be applied for the __back propagation algorithm__:
+
+Given training set $\lbrace (x^{(1)}, y^{(1)}) \cdots (x^{(m)}, y^{(m)})\rbrace$
+
+- Set $\Delta^{(l)}_{i,j}$:= 0 for all (l, i, j), (hence end up having a matrix full of zeros)
+
+For training example __t = 1 to m__:
+
+1. Set $a^{(1)}:=x^{(t)}$
+2. Perform forward propagation to compute $a^{(l)}$ for l=2,3,...,L
+    1. $a^{(1)} = x$
+    2. $z^{(2)} = \Theta^{(1)}a^{(1)}$
+    3. $a^{(2)} = g(z^{(2)}) \ \ \ \ (\text{add } a_0^{(2)})$
+    4. $z^{(3)} = \Theta^{(2)}a^{(2)}$
+    5. $a^{(3)} = g(z^{(3)}) \ \ \ \ (\text{add } a_0^{(3)})$
+    6. $z^{(4)} = \Theta^{(3)}a^{(3)}$
+    7. $a^{(4)} = h_\Theta (x) = g(z^{(4)})$
+3. Using $y^{(t)}$, compute $\delta^{(L)} = a^{(L)} - y^{(t)}$
+
+To get the delta values of the layers before the last layer (the last one is simply the difference between the output $a^{(L)})$ and the correct outputs in $y$), the following equation will step back from right to left:
+
+4. Compute $\delta^{(L-1)}, \delta^{(L-2)},\dots,\delta^{(2)}$, using $\delta^{(l)} = ((\Theta^{(l)})^T \delta^{(l+1)})\ .*\ a^{(l)}\ .*\ (1 - a^{(l)})$
+
+The delta values of layer l are calculated by multiplying the delta values in the next layer with the theta matrix of layer l. Then element-wise multiply that with a function called $g'$, or __g-prime__, which is the derivative of the activation function $g$ evaluated with the input values given by $z^{(l)}$.
+$$
+g'(z^{(l)}) = a^{(l)}\ .*\ (1 - a^{(l)})
+$$
+
+5. $\Delta^{(l)}_{i,j} := \Delta^{(l)}_{i,j} + a_j^{(l)} \delta_i^{(l+1)}$ or with Vectorization, $\Delta^{(l)} := \Delta^{(l)} + \delta^{(l+1)}(a^{(l)})^T$
+
+Hence update the new $\Delta$ matrix.
+
+- $D^{(l)}_{i,j} := \dfrac{1}{m}\left(\Delta^{(l)}_{i,j} + \lambda\Theta^{(l)}_{i,j}\right)$
+- $D^{(l)}_{i,j} := \dfrac{1}{m}\Delta^{(l)}_{i,j}$
+
+The capital-delta matrix D is used as an "accumulator" to add up values and eventually compute the partial derivative, resulting in $\frac \partial {\partial \Theta_{ij}^{(l)}} J(\Theta)$.
+
+### Implementation Notes
+Assuming a 3 layer network with ten nodes in layer 1 and layer 2, and one node in the output layer.
+```
+thetaVec  = [Theta1(:); Theta2(:); Theta3(:)]
+DVec      = [D1(:); D2(:); D3(:)]
+
+Theta1 = reshape (thetaVec(1:110),10,11);
+Theta2 = reshape (thetaVec(111:220),10,11);
+Theta3 = reshape (thetaVec(221:231),1,11);
+```
+#### Gradient checking
+Only use to check but disable during learning as it is a really slow algorithm.
+
+Approximate the derivative of the cost function:
+$$
+\dfrac{\partial}{\partial\Theta}J(\Theta) \approx \dfrac{J(\Theta + \epsilon) - J(\Theta - \epsilon)}{2\epsilon}
+$$
+With multiple theta matrices, it can be approximated __with respect to $\Theta_j$__ as follows:
+$$
+\dfrac{\partial}{\partial\Theta_j}J(\Theta) \approx \dfrac{J(\Theta_1, \dots, \Theta_j + \epsilon, \dots, \Theta_n) - J(\Theta_1, \dots, \Theta_j - \epsilon, \dots, \Theta_n)}{2\epsilon}
+$$
+using a small value for epsilon ($\epsilon = 10^{-4}$)
+```
+epsilon = 1e-4;
+for i = 1:n,
+  thetaPlus = theta;
+  thetaPlus(i) += epsilon;
+  thetaMinus = theta;
+  thetaMinus(i) -= epsilon;
+  gradApprox(i) = (J(thetaPlus) - J(thetaMinus))/(2*epsilon)
+end;
+```
+
+#### Random Initialization
+Initializing all $\Theta$ to zero will result in identical $a$ and $\delta$ as well as identical gradients.
+Hence, initialize each $\Theta^{(l)}_{ij}$ to a random value between $[-\epsilon,\epsilon]$ ($\epsilon$ is not related to the error from before)
+```
+If the dimensions of Theta1 is 10x11, Theta2 is 10x11 and Theta3 is 1x11.
+
+Theta1 = rand(10,11) * (2 * INIT_EPSILON) - INIT_EPSILON;
+Theta2 = rand(10,11) * (2 * INIT_EPSILON) - INIT_EPSILON;
+Theta3 = rand(1,11) * (2 * INIT_EPSILON) - INIT_EPSILON;
+```
+
+#### Training a neural network
+
+- Number of input units = dimension of features $x^{(i)}$
+- Number of output units = number of classes
+- Number of hidden units per layer = usually more the better (must balance with cost of computation as it increases with more hidden units)
+- Defaults: 1 hidden layer. If you have more than 1 hidden layer, then it is recommended that you have the same number of units in every hidden layer.
+
+1. Randomly initialize the weights
+2. Implement forward propagation to get $h_\Theta(x^{(i)})$ for any $x(i)$
+3. Implement the cost function
+4. Implement backpropagation to compute partial derivatives
+5. Use gradient checking to confirm that your backpropagation works. Then disable gradient checking.
+6. Use gradient descent or a built-in optimization function to minimize the cost function with the weights in theta.
+
+After having forward and back propagation performed, loop on every training example:
+```
+for i = 1:m,
+   Perform forward propagation and backpropagation using example (x(i),y(i))
+   (Get activations a(l) and delta terms d(l) for l = 2,...,L
+```
+
+<div class="pagebreak"></div>
+## Week 5
