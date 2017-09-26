@@ -38,6 +38,34 @@ Theta2_grad = zeros(size(Theta2));
 %         variable J. After implementing Part 1, you can verify that your
 %         cost function computation is correct by verifying the cost
 %         computed in ex4.m
+
+%a = [ones(m, 1), X];
+%z = a * Theta1';
+%a = sigmoid(z);
+%
+%a = [ones(m, 1), a];
+%z = a * Theta2';
+%a = sigmoid(z);
+
+a1 = [ones(m, 1), X];
+    z2 = a1 * Theta1';
+    a2 = sigmoid(z2);
+    a2 = [ones(m, 1), a2];
+    z3 = a2 * Theta2';
+    a3 = sigmoid(z3);
+
+h = a3;
+
+
+yd = eye(num_labels);
+y = yd(y,:);
+
+logisfunc = (-y).*log(h) - (1-y).*log(1-h);
+J = (1/m) .* sum(sum(logisfunc));
+
+regularization = lambda / (2 * m) * (sum(sum(Theta1(:, 2:end) .^ 2)) + sum(sum(Theta2(:, 2:end) .^ 2)));
+J = J + regularization;
+
 %
 % Part 2: Implement the backpropagation algorithm to compute the gradients
 %         Theta1_grad and Theta2_grad. You should return the partial derivatives of
@@ -54,6 +82,44 @@ Theta2_grad = zeros(size(Theta2));
 %               over the training examples if you are implementing it for the 
 %               first time.
 %
+%delta3 = zeros(m, num_labels);
+%delta2 = zeros(m, num_labels);
+Delta2 = 0;
+Delta1 = 0;
+
+%for t = 1:m
+%    a1 = X(t,:)'; % spaltenvektor
+%    a1 = [1; a1];
+%    z2 = Theta1 * a1;
+%    a2 = sigmoid(z2);
+%    a2 = [1; a2]; % spaltenvektor
+%    z3 = Theta2 * a2;
+%    a3 = sigmoid(z3);
+%    
+%    
+%    delta3(t,:) = a3' .- y(t,:);
+%    
+%    
+%    delta2 = Theta2'*delta3' .* sigmoidGradient([1; z2(:,t)]);
+%    delta2 = delta2(2:end,:);
+%    
+%    Delta2 = Delta2 + delta3 * a2';
+%    Delta1 = Delta1 + delta2 * a1';
+%end
+
+delta3 = a3 - y;
+delta2 = delta3 * Theta2 .* sigmoidGradient([ones(m, 1), z2]);
+delta2 = delta2(:,2:end);
+Delta1 = a1' * delta2;
+Delta2 = a2' * delta3;
+
+Theta1_grad = Delta1'./m;
+Theta2_grad = Delta2'./m;
+
+Theta1_grad = Theta1_grad .+ lambda/m * [zeros(size(Theta1, 1), 1) Theta1(:,2:end)];
+Theta2_grad = Theta2_grad .+ lambda/m * [zeros(size(Theta2, 1), 1) Theta2(:,2:end)];
+
+
 % Part 3: Implement regularization with the cost function and gradients.
 %
 %         Hint: You can implement this around the code for
