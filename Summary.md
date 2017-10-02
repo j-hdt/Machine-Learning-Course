@@ -411,4 +411,118 @@ for i = 1:m,
 ```
 
 <div class="pagebreak"></div>
-## Week 5
+## Week 6
+
+### Evaluating a Hypothesis
+
+A hypothesis may have low error for the training examples but still be inaccurate (because of overfitting).
+
+With a given dataset of training examples, we can split up the data into two sets: a __training set__ and a test set.
+
+The new procedure using these two sets is then:
+
+- Learn $\Theta$ and minimize $J_{train}(\Theta)$ using the training set
+- Compute the test set error $J_{test}(\Theta)$
+
+#### The test set error
+
+1. For linear regression: $J_{test}(\Theta) = \dfrac{1}{2m_{test}} \sum_{i=1}^{m_{test}}(h_\Theta(x^{(i)}_{test}) - y^{(i)}_{test})^2$
+2. For classification ~ Misclassification error (aka 0/1 misclassification error):    
+$$
+err(h_\Theta(x),y) =
+\begin{matrix}
+1 & \mbox{if } h_\Theta(x) \geq 0.5\ and\ y = 0\ or\ h_\Theta(x) < 0.5\ and\ y = 1\\
+0 & \mbox otherwise
+\end{matrix}
+$$
+
+This gives us a binary 0 or 1 error result based on a misclassification.
+The average test error for the test set is
+$$
+\text{Test Error} = \dfrac{1}{m_{test}} \sum^{m_{test}}_{i=1} err(h_\Theta(x^{(i)}_{test}), y^{(i)}_{test})
+$$
+This gives us the proportion of the test data that was misclassified.
+
+### Model Selection and Train/Validation/Test Sets
+
+1. Optimize the parameters in $\Theta$ using the training set for each polynomial degree.
+2. Find the polynomial degree d with the least error using the test set.
+3. Estimate the generalization error also using the test set with $J_{test}(\Theta^{(d)})$, (d = theta from polynomial with lower error);
+
+In this case, we have trained one variable, d, or the degree of the polynomial, using the test set. This will cause our error value to be greater for any other set of data.
+
+#### Use of the CV set
+
+To solve this, we can introduce a third set, the __Cross Validation Set__, to serve as an intermediate set that we can train d with. Then our test set will give us an accurate, non-optimistic error.
+
+One example way to break down our dataset into the three sets is:
+
+- Training set: 60%
+- Cross validation set: 20%
+- Test set: 20%
+
+We can now calculate three separate error values for the three different sets.
+
+#### With the Validation Set (note: this method presumes we do not also use the CV set for regularization)
+
+1. Optimize the parameters in $\Theta$ using the training set for each polynomial degree.
+2. Find the polynomial degree d with the least error using the cross validation set.
+3. Estimate the generalization error using the test set with $J_{test}(\Theta^{(d)})$, (d = theta from polynomial with lower error);
+
+This way, the degree of the polynomial d has not been trained using the test set.
+
+(Mentor note: be aware that using the CV set to select 'd' means that we cannot also use it for the validation curve process of setting the lambda value).
+
+### Diagnosing Bias vs. Variance
+
+In this section we examine the relationship between the degree of the polynomial d and the underfitting or overfitting of our hypothesis.
+
+- We need to distinguish whether __bias__ or __variance__ is the problem contributing to bad predictions.
+- High bias is underfitting and high variance is overfitting. We need to find a golden mean between these two.
+
+The training error will tend to __decrease__ as we increase the degree d of the polynomial.
+
+At the same time, the cross validation error will tend to __decrease__ as we increase d up to a point, and then it will __increase__ as d is increased, forming a convex curve.
+
+__High bias (underfitting)__: both $J_{train}(\Theta)$ and $J_{CV}(\Theta)$ will be high. Also, $J_{CV}(\Theta) \approx J_{train}(\Theta)$.
+
+![](https://d3c33hcgiwev3.cloudfront.net/imageAssetProxy.v1/yPz7yntYEeam4BLcQYZr8Q_07e80cbb290293d193f3cd92f1148e16_300px-Features-and-polynom-degree.jpg?expiry=1507075200000&hmac=Z6ogirsSfQIoizP2KkMUB-YsHdDAmL1boy_a23ihQV8)
+
+### Regularization and Bias/Variance
+
+Instead of looking at the degree d contributing to bias/variance, now we will look at the regularization parameter $\lambda$.
+
+- Large $\lambda$: High bias (underfitting)
+- Intermediate $\lambda$: just right
+- Small $\lambda$: High variance (overfitting)
+A large lambda heavily penalizes all the $\Theta$ parameters, which greatly simplifies the line of our resulting function, so causes underfitting.
+
+The relationship of $\lambda$ to the training set and the variance set is as follows:
+
+__Low $\lambda$__: $J_{train}(\Theta)$ is low and $J_{CV}(\Theta)$ is high (high variance/overfitting).
+
+__Intermediate $\lambda$__: $J_{train}(\Theta)$ and $J_{CV}(\Theta)$ are somewhat low and $J_{train}(\Theta) \approx J_{CV}(\Theta)$.
+
+__Large $\lambda$__: both $J_{train}(\Theta)$ and $J_{CV}(\Theta)$ will be high (underfitting /high bias)
+
+The figure below illustrates the relationship between lambda and the hypothesis:
+
+![](https://d3c33hcgiwev3.cloudfront.net/imageAssetProxy.v1/8K3a0XtZEealOA67wFuqoQ_fb209643920cb669170dfe96a19e2b00_300px-Features-and-polynom-degree-fix.png?expiry=1507075200000&hmac=4CFsD2AIhIpA8VsK1iJVZomcZhcbFGQIOP0SWlv__gE)
+
+In order to choose the model and the regularization $\lambda$, we need:
+
+1. Create a list of lambdas (i.e. $\lambda\in${0, 0.01, 0.02, 0.04, 0.08, 0.16, 0.32, 0.64, 1.28, 2.56, 5.12, 10.24});
+2. Create a set of models with different degrees or any other variants.
+
+3. Iterate through the $\lambda$s and for each $\lambda$ go through all the models to learn some $\Theta$.
+
+4. Compute the cross validation error using the learned $\Theta$ (computed with $\lambda$) on the $J_{CV}(\Theta)$ without regularization or $\lambda$ = 0.
+
+5. Select the best combo that produces the lowest error on the cross validation set.
+
+6. Using the best combo $\Theta$ and $\lambda$, apply it on $J_{test}(\Theta)$ to see if it has a good generalization of the problem.
+
+
+
+<div class="pagebreak"></div>
+## Week 7
